@@ -1,0 +1,115 @@
+        .signup-body {
+            width: 100%;
+            height: 100vh;
+            background: url(../public/bg.png) no-repeat;
+            background-position: center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .signup-page {
+            width: 70%;
+            height: 75%;
+            overflow: hidden;
+            border-radius: 15px;
+            display: flex;
+            /* border: #fafafa 2px solid; */
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+        }
+
+        .left {
+            background: url(../public/bg.png) no-repeat;
+            background-position: center;
+            background-size: cover;
+            width: 50%;
+            height: 100%;
+            color: #fafafa;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left h2 {
+            letter-spacing: 1px;
+            font-size: 70px;
+            margin: auto 0px;
+        }
+
+        .left img {
+            width: 64px;
+        }
+
+        .right {
+            width: 50%;
+            height: 100%;
+            background-color: #fafafa;
+            padding: 30px 60px;
+            color: #1e1e1e;
+        }
+
+        .labels {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #1e1e1e;
+        }
+
+        .labels:not(.x-lg) label {
+            width: 47%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label h4 {
+            font-size: 18px;
+            color: #1e1e1e;
+        }
+
+        .right p {
+            color: #1e1e1e5f;
+            width: 65%;
+            margin-bottom: 30px;
+        }
+
+        .right form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right form h4 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .right form label {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .right form input {
+            width: 100%;
+            padding: 10px 7px;
+            font-size: 18px;
+            border-radius: 5px;
+            outline: none;
+            border: #1e1e1e4c 1px solid;
+        }
+
+        .right form input:focus {
+            box-shadow: #00a6e83f 0px 2px 8px 0px;
+            border: #00a6e8 1px solid;
+            transition: all ease 0.3s;
+        }
+
+        .right .sign {
+            width: 100%;
+            text-align: center;
+            color: #1e1e1e;
+            margin-bottom: 0px;
+            margin-top: 45px;
+            font-size: 18px;
+        }
