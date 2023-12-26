@@ -6,13 +6,14 @@ class User
     private $username;
     private $email;
     private $role;
-
-    public function __construct($id, $username, $email, $role)
+    private $imagePath;
+    public function __construct($id, $username, $email, $role , $imagePath)
     {
         $this->id = $id;
         $this->username = $username;
         $this->email = $email;
         $this->role = $role;
+        $this->imagePath = $imagePath;
     }
 
     // getters 
@@ -35,7 +36,10 @@ class User
     {
         return $this->role;
     }
-
+    public function getImagePath()
+    {
+        return $this->imagePath;
+    }
     
 }
 
