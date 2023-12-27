@@ -44,11 +44,13 @@ Abstract:xxx
 |    |—— Database.php
 |    |—— ProductOwner.php
 |    |—— Project.php
+|    |—— ProjectManager.php
 |    |—— ScrumMaster.php
 |    |—— Teams.php
 |    |—— User.php
+|    |—— UserManager.php
 |—— config
-|    |—— db.php
+|    |—— config.php
 |—— includes
 |    |—— headers
 |        |—— header_member.php
@@ -59,6 +61,7 @@ Abstract:xxx
 |    |—— index.php
 |    |—— logout.php
 |    |—— product_owner
+|        |—— assign_sm.php
 |        |—— create_project.php
 |        |—— delete_project.php
 |        |—— edit_project.php
@@ -71,6 +74,11 @@ Abstract:xxx
 |    |—— user
 |        |—— index.php
 |        |—— project.php
+|—— public
+|    |—— img
+|        |—— img1.jpg
+|        |—— img2.jpg
+|        |—— logov.PNG
 |—— upload
 |    |—— abdo.jpg
 |    |—— ahmad.jpg
