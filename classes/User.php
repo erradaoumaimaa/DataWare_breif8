@@ -41,6 +41,7 @@ class User
         return $this->imagePath;
     }
     
+    
 }
 
 ?>
