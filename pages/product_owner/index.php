@@ -81,13 +81,12 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
                                     </td>
                                     <td class="text-sm font-medium leading-5 whitespace-no-wrap border-b border-gray-200">
                                         <div class="flex items-center">
-                                            <a href="#" class="text-indigo-600 hover:text-indigo-900 me-2" onclick="editProject(<?= htmlspecialchars($project['id']) ?>)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </a>
+                                        <a href="#" class="text-indigo-600 hover:text-indigo-900 me-2" onclick="editProject(<?= htmlspecialchars($project['id']) ?>)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            </svg>
+                                                        </a>
                                             <a href="#" class="text-red-600 hover:text-red-800" onclick="confirmDelete(<?= htmlspecialchars($project['id']) ?>)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
                                                     stroke="currentColor">
@@ -110,6 +109,10 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
         function redirectToCreateProject() {
             window.location.href = '../product_owner/create_project.php';
         }
+        function editProject(projectId) {
+      
+        window.location.href = `./edit_project.php?id=${projectId}`;
+    }
     </script>
 
 </body>

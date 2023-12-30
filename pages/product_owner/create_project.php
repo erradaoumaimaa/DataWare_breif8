@@ -91,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result === null) {
         // Success
-        echo "Redirecting..."; // Add this line for debugging
+        echo "Redirecting..."; 
         header("Location: /DataWare_breif8/pages/product_owner/index.php");
         exit();
     
