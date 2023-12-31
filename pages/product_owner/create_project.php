@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = $_POST["status"];
     $scrumMasterEmail = $_POST["scrum_master"];
 
-    // Assuming you have a variable for the Product Owner's user ID, replace $productOwnerId with your actual variable
+
     $productOwnerId = 37; // Replace this with the actual Product Owner's user ID
 
     // Create the project

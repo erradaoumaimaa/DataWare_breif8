@@ -1,26 +1,50 @@
 <?php
 require_once "../config/config.php";
 require_once "../classes/UserManager.php";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $email = $_POST["email"];
     $password = $_POST["password"];
-    $image = "default.jpg"; // Image par défaut
+    $img = "default.jpg";
+    // test if the image upload
+if ($_FILES['profilePicture']['name']) {
+  $targetDirectory = __DIR__ . "/../upload/";
+  $targetPath = $targetDirectory . basename($_FILES['profilePicture']['name']);
+  
+  // upload
+  if (!file_exists($targetDirectory)) {
+      mkdir($targetDirectory, 0755, true);
+  }
+  
+  // Now move the uploaded file
+  if (move_uploaded_file($_FILES['profilePicture']['tmp_name'], $targetPath)) {
+      // File uploaded successfully
+      echo "The file " . basename($_FILES['profilePicture']['name']) . " has been uploaded.";
+      $img = "upload/" . $_FILES['profilePicture']['name'];
+  } else {
+      // Error uploading file
+      echo "Sorry, there was a problem uploading your file.";
+  }
+}
 
-    
 
     $userManager = new UserManager($database);
 
-    if ($userManager->signUp($username, $email, $password, $image)) {
-        // Redirection après l'inscription réussie
+    $signUpResult = $userManager->signUp($username, $email, $password, $img);
+    
+    if ($signUpResult === null) {
+        // Redirection after successful registration
         header("Location: index.php");
         exit();
     } else {
-        $message = "Error during registration.";
+        // Display a more detailed error message
+        $message = "Registration failed. Reason: " . $signUpResult;
     }
 }
-
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,11 +54,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Add Tailwind CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-  <title> Registration Form</title>
+  <title>Registration Form</title>
 </head>
 
 <body class="bg-cover bg-center h-screen flex items-center justify-center"
-                    style="background-image: url('../public/img/img1.jpg');">
+  style="background-image: url('../public/img/image1.jpg');">
 
   <div class="bg-white p-8 rounded w-96 shadow-md max-w-md rounded-2xl">
 
@@ -51,18 +75,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="password" id="password" name="password" placeholder="Enter your password" class="mt-1 p-2 w-full border rounded-md">
       </div>
       <div class="mt-4">
-      <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="mt-1 p-2 w-full border rounded-md">
+        <input type="file" id="profilePicture" name="profilePicture" accept="image/*" class="mt-1 p-2 w-full border rounded-md">
       </div>
       <div class="mt-6">
-        <!-- <label for="acceptTerms" class="ml-2 text-sm text-gray-600">I accept the <a href="#" class="text-purple-500 font-semibold">Terms of Use</a> & <a href="#" class="text-purple-500 font-semibold">Privacy Policy</a> -->
-        <p class="mt-4 text-gray-600 text-xs text-center">Already have an account? <a href="index.php" class="text-blue-500 hover:underline">Sign in here</a>.</p>
-      </div>
-      <div class="mt-6">
-       
-      <button type="submit"
-                    class="w-full text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full px-5 py-2.5 text-center">
-                Register Now
-            </button>
+        <button type="submit"
+          class="w-full px-6 py-3 font-bold text-center bg-gradient-to-tl from-purple-700 to-pink-500 uppercase align-middle transition-all rounded-lg cursor-pointer leading-pro text-xs ease-soft-in tracking-tight-soft shadow-soft-md bg-150 bg-x-25 hover:scale-102 active:opacity-85 hover:shadow-soft-xs text-white">
+          Register Now
+        </button>
+        <p class="mt-4 text-gray-600 text-xs text-center"> have an account? <a href="./index.php"
+                    class="text-blue-500 hover:underline">Sign in here</a>.</p>
         <p class="my-4 text-red-600 text-xs text-center">
           <?php
           if (!empty($message)) {
@@ -77,4 +98,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 </html>
-

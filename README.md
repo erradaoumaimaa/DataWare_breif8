@@ -66,6 +66,7 @@ Abstract:xxx
 |        |—— delete_project.php
 |        |—— edit_project.php
 |        |—— index.php
+|        |—— p.php
 |    |—— scrum_master
 |        |—— assign_teams.php
 |        |—— index.php
@@ -76,20 +77,13 @@ Abstract:xxx
 |        |—— project.php
 |—— public
 |    |—— img
+|        |—— image1.jpg
 |        |—— img1.jpg
 |        |—— img2.jpg
+|        |—— logo.png
 |        |—— logov.PNG
 |—— upload
-|    |—— abdo.jpg
-|    |—— ahmad.jpg
-|    |—— bob.jpg
-|    |—— jane.jpg
-|    |—— jhon.jpg
-|    |—— mesh-267.png
-|    |—— najoua.jfif
 |    |—— oumaima.jpg
-|    |—— radia.jpg
-|    |—— yassir.jpg
 ```
 ## Code Details
 ### Tested Platform
