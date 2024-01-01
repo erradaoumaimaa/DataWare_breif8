@@ -57,6 +57,7 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
                                 <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                                     Actions
                                 </th>
+                             
                             </tr>
                         </thead>
                         <tbody class="bg-white">
@@ -68,9 +69,7 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
                                     <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                         <p><?= htmlspecialchars($project['description']) ?></p>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                        <p><?= htmlspecialchars($project['scrum_master']) ?></p>
-                                    </td>
+                                   
                                     <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                         <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-300"><?= htmlspecialchars($project['status']) ?></span>
                                     </td>
@@ -78,6 +77,13 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
                                         <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
                                             <?= htmlspecialchars(date('d/m/Y', strtotime($project['date_end']))) ?>
                                         </span>
+                                    </td>
+                                   
+
+                                    <!-- Ajouter cette cellule pour chaque utilisateur dans le tableau -->
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <button onclick="changeUserRole(<?= htmlspecialchars($user['id']) ?>, 'scrum_master')">Change to Scrum Master</button>
+                                        <button onclick="changeUserRole(<?= htmlspecialchars($user['id']) ?>, 'user')">Change to User</button>
                                     </td>
                                     <td class="text-sm font-medium leading-5 whitespace-no-wrap border-b border-gray-200">
                                         <div class="flex items-center">
@@ -112,6 +118,32 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
         function editProject(projectId) {
       
         window.location.href = `./edit_project.php?id=${projectId}`;
+    }
+    function confirmDelete(projectId) {
+        if (confirm("Are you sure you want to delete this project?")) {
+            
+            deleteProject(projectId);
+        }
+    }
+
+    function deleteProject(projectId) {
+       
+        fetch(`./delete_project.php?id=${projectId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            if (data.success) {
+                // Reload the page or update the UI as needed
+                window.location.reload();
+            } else {
+                alert("Error deleting project: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
     </script>
 

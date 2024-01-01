@@ -73,7 +73,7 @@ class ProjectManager
 
     public function getScrumMasters()
     {
-        $query = "SELECT email FROM users WHERE role = 'scrum_master'";
+        $query = "SELECT email FROM users WHERE role = 'sm'";
         $stmt = $this->database->getConnection()->prepare($query);
 
         if ($stmt) {
@@ -89,7 +89,7 @@ class ProjectManager
 
     public function getProjectsForProductOwner($productOwnerId)
     {
-        $query = "SELECT p.*, u.email as scrum_master FROM projects p
+        $query = "SELECT p.*, u.email as sm FROM projects p
                   INNER JOIN users u ON p.scrum_master_id = u.id
                   WHERE p.product_owner_id = :productOwnerId";
         $stmt = $this->database->getConnection()->prepare($query);
@@ -119,12 +119,13 @@ class ProjectManager
         try {
             $this->database->getConnection()->beginTransaction();
     
-            $query = "UPDATE projects SET 
-                        name = :name, 
-                        description = :description, 
-                        date_end = :endDate, 
-                        status = :status, 
-                        scrum_master_id = :scrumMasterId 
+            // Update the project
+            $query = "UPDATE projects 
+                      SET name = :name, 
+                          description = :description, 
+                          date_end = :endDate, 
+                          status = :status, 
+                          scrum_master_id = :scrumMasterId 
                       WHERE id = :projectId";
     
             $stmt = $this->database->getConnection()->prepare($query);
@@ -135,8 +136,6 @@ class ProjectManager
                 $stmt->bindValue(":description", $description, PDO::PARAM_STR);
                 $stmt->bindValue(":endDate", $endDate, PDO::PARAM_STR);
                 $stmt->bindValue(":status", $status, PDO::PARAM_STR);
-                
-                // Handle NULL for scrum_master_id
                 $stmt->bindValue(":scrumMasterId", $scrumMasterId, PDO::PARAM_INT);
     
                 $stmt->execute();
@@ -156,6 +155,8 @@ class ProjectManager
         }
     }
     
+
+    
     
     public function getProjectById($projectId)
 {
@@ -173,6 +174,37 @@ class ProjectManager
 
     return null;
 }
+
+
+public function deleteProject($projectId)
+{
+    try {
+        // Use a database transaction for better data integrity
+        $this->database->getConnection()->beginTransaction();
+
+        // Delete the project
+        $query = "DELETE FROM projects WHERE id = :projectId";
+        $stmt = $this->database->getConnection()->prepare($query);
+
+        if ($stmt) {
+            $stmt->bindValue(":projectId", $projectId, PDO::PARAM_INT);
+            $stmt->execute();
+            $stmt->closeCursor();
+
+            // Commit the transaction if everything is successful
+            $this->database->getConnection()->commit();
+
+            return null; // Success
+        } else {
+            return "Error: Unable to prepare the statement.";
+        }
+    } catch (Exception $e) {
+        // Rollback the transaction in case of an error
+        $this->database->getConnection()->rollBack();
+        return "Error: " . $e->getMessage();
+    }
+}
+
 
 }
 

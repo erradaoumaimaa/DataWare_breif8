@@ -1,38 +1,20 @@
 <?php
 require_once "../config/config.php";
 require_once "../classes/UserManager.php";
+require_once "../classes/FileUploadHelper.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $email = $_POST["email"];
     $password = $_POST["password"];
-    $img = "default.jpg";
-    // test if the image upload
-if ($_FILES['profilePicture']['name']) {
-  $targetDirectory = __DIR__ . "/../upload/";
-  $targetPath = $targetDirectory . basename($_FILES['profilePicture']['name']);
-  
-  // upload
-  if (!file_exists($targetDirectory)) {
-      mkdir($targetDirectory, 0755, true);
-  }
-  
-  // Now move the uploaded file
-  if (move_uploaded_file($_FILES['profilePicture']['tmp_name'], $targetPath)) {
-      // File uploaded successfully
-      echo "The file " . basename($_FILES['profilePicture']['name']) . " has been uploaded.";
-      $img = "upload/" . $_FILES['profilePicture']['name'];
-  } else {
-      // Error uploading file
-      echo "Sorry, there was a problem uploading your file.";
-  }
-}
 
+    // Use the FileUploadHelper to handle file upload
+    $img = FileUploadHelper::uploadFile($_FILES["profilePicture"], __DIR__ . "/../upload/");
 
     $userManager = new UserManager($database);
 
     $signUpResult = $userManager->signUp($username, $email, $password, $img);
-    
+
     if ($signUpResult === null) {
         // Redirection after successful registration
         header("Location: index.php");

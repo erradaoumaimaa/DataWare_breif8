@@ -1,6 +1,6 @@
 <?php
 
-require_once "../classes/User.php";
+require_once "User.php";
 class UserManager
 {
     private $database;
@@ -53,23 +53,30 @@ class UserManager
     $img = "default.jpg";
 
     if (is_array($profilePicture) && $profilePicture['error'] === UPLOAD_ERR_OK) {
-        $targetDirectory = __DIR__ . "/../upload/";
-        $targetPath = $targetDirectory . basename($profilePicture['name']);
+        $targetDirectory = realpath(__DIR__ . "/../upload/") . "/";
+        // Debug statement to check if this block is executed
+        echo "File upload block executed<br>";
 
-        // Create the "upload" directory if it doesn't exist
-        if (!file_exists($targetDirectory)) {
-            mkdir($targetDirectory, 0755, true);
-        }
+        // Debug statement to check the values
+        echo "Profile Picture Array: ";
+        print_r($profilePicture);
+        echo "<br>";
 
-        // Now move the uploaded file
-        if (move_uploaded_file($profilePicture['tmp_name'], $targetPath)) {
-            // File uploaded successfully
-            $img = "upload/" . basename($profilePicture['name']);
-        } else {
+        // Use FileUploadHelper to handle file upload
+        $uploadResult = FileUploadHelper::uploadFile($profilePicture, $targetDirectory);
+
+        if (is_string($uploadResult)) {
             // Error uploading file
-            return "Sorry, there was a problem uploading your file.";
+            return $uploadResult;
+        } else {
+            // Debug statement to check the uploaded result
+            echo "File uploaded successfully: $uploadResult<br>";
+            $img = $uploadResult;
         }
     }
+
+    // Debug statement to check the final value of $img
+    echo "Final value of \$img: $img<br>";
 
     // Use a database transaction for better data integrity
     try {
@@ -99,7 +106,38 @@ class UserManager
         return "Error: " . $e->getMessage() . " SQL: " . $query;
     }
 }
+public function getUsersExceptProductOwner($productOwnerId)
+    {
+        $query = "SELECT * FROM users WHERE id != :productOwnerId AND role != 'po'";
+        $stmt = $this->database->getConnection()->prepare($query);
 
+        if ($stmt) {
+            $stmt->bindValue(":productOwnerId", $productOwnerId, PDO::PARAM_INT);
+            $stmt->execute();
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $users;
+        }
+
+        return [];
+    }
+
+    public function changeUserRole($userId)
+    {
+        $query = "UPDATE users SET role = CASE WHEN role = 'user' THEN 'sm' ELSE 'user' END WHERE id = :userId";
+        $stmt = $this->database->getConnection()->prepare($query);
+    
+        if ($stmt) {
+            $stmt->bindValue(":userId", $userId, PDO::PARAM_INT);
+            $stmt->execute();
+            $stmt->closeCursor();
+            return 'Role changed successfully';
+        } else {
+            return 'Error: Unable to prepare the statement.';
+        }
+    }
+    
 }
 
 ?>
