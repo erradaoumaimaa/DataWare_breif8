@@ -2,15 +2,23 @@
 require_once(dirname(__FILE__) . "/../../config/Config.php");
 require_once "../../includes/headers/header_scrum_master.php";
 require_once "../../classes/Database.php";
-require_once "../../classes/Team.php";
-require_once "../../classes/UserManager.php";
-require_once "../../classes/TeamManager.php";
-require_once(dirname(__FILE__) . "/../../classes/ScrumMaster.php");
+require_once(dirname(__FILE__) . "/../../classes/Team.php");
+$database = new Database($dbHost, $dbUser, $dbPassword, $dbName);
 
-
-$teamManager = new TeamManager($database);
-$teams = $teamManager->getTeams();
-
+$teams = [];
+try {
+    $query = "SELECT teams.*, users.username AS scrum_master_name FROM teams LEFT JOIN users ON teams.scrum_master_id = users.id";
+    $stmt = $database->getConnection()->prepare($query);
+    $stmt->execute();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+      $team = new Team($row['id'], $row['name'], $row['created_at'], $row['description'], $row['scrum_master_name']);
+      $teams[] = $team;
+  }
+} catch (PDOException $e) {
+    die("Erreur lors de la récupération des équipes : " . $e->getMessage());
+} finally {
+    $database->disconnect();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,12 +59,18 @@ $teams = $teamManager->getTeams();
                             <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
                                 Created_At
                             </th>
-                           
+                            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                                Teams Members
+                            </th>
+                            <th class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                                Project
+                            </th>
                             <th class="px-6 py-3 text-sm text-left text-gray-500 border-b border-gray-200 bg-gray-50" colspan="3">
                                 Action
                             </th>
                         </tr>
                     </thead>
+
                     <tbody class="bg-white">
                         <?php foreach ($teams as $team): ?>
                             <tr>
@@ -71,33 +85,30 @@ $teams = $teamManager->getTeams();
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                    <p><?php echo $team->getScrumMasterId(); ?></p>
+                                    <p><?php echo $team->getScrumMasterName(); ?></p>
                                 </td>
 
-                                <td class="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200">
-                                        <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-                                            <?= htmlspecialchars(date('d/m/Y', strtotime($team->getCreatedAt() ))) ?>
-                                        </span>
-                                    </td>
-                                    
+                                <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                    <p><?php echo $team->getCreatedAt(); ?></p>
+                                </td>
+                               
                                 <!-- Actions -->
-                                <td class="text-sm font-medium leading-5 whitespace-no-wrap border-b border-gray-200">
-                                        <div class="flex items-center">
-                                        <a href="edit_team.php?team_id=<?php echo $team->getId(); ?>" class="text-indigo-600 hover:text-indigo-900 me-2" onclick="editProject(<?= htmlspecialchars($project['id']) ?>)">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                            </svg>
-                                                        </a>
-                                            <a href="delete_team.php?team_id=<?php echo $team->getId(); ?>" class="text-red-600 hover:text-red-800" onclick="confirmDelete(<?= htmlspecialchars($project['id']) ?>)">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </td>
+                                <td class="text-sm font-medium leading-5 whitespace-no-wrap border-b border-gray-200 ">
+                                    <!-- éditer l'équipe -->
+                                    <a href="edit_team.php?team_id=<?php echo $team->getId(); ?>" class="text-indigo-600 hover:text-indigo-900">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                    </a>
+
+                                    <!-- supprimer l'équipe -->
+                                    <a href="delete_team.php?team_id=<?php echo $team->getId(); ?>" class="text-red-600 hover:text-red-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </a>
+                                    
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

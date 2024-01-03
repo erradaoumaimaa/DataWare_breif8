@@ -6,9 +6,9 @@ require_once "../../config/config.php";
 require_once "../../classes/Database.php";
 
 // Check if the user is logged in
-if (!isset($_SESSION['user'])) {
+if (!isset($_SESSION['id'])) {
     // Redirect to the login page or handle the case where the user is not logged in
-    header("Location: login.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -37,7 +37,7 @@ function getRandomColor()
 }
 
 // Fetch the currently logged-in user's information
-$loggedInUser = $_SESSION['user'];
+$loggedInUser = $_SESSION['id'];
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +51,7 @@ $loggedInUser = $_SESSION['user'];
 </head>
 
 <body>
-    <h1>Hello <?= $loggedInUser['username'] ?></h1>
+    <h1>Hello <?= $users['username'] ?></h1>
 
     <div class="grid grid-cols-3 gap-4">
         <?php foreach ($users as $user) : ?>

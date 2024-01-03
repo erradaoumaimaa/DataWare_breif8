@@ -14,11 +14,10 @@ class Database
         $this->username = $username;
         $this->password = $password;
         $this->dbname = $dbname;
-
         $this->connect();
     }
 
-    private function connect()
+    public function connect()
     {
         try {
             $dsn = "mysql:host={$this->host};dbname={$this->dbname}";
@@ -33,7 +32,10 @@ class Database
     {
         return $this->con;
     }
-    
+    public function disconnect()
+    {
+        $this->con = null;
+    }
     public function getUserByEmail($email)
     {
         $query = "SELECT * FROM users WHERE email = :email";
@@ -43,6 +45,15 @@ class Database
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public function getLoggedInUserId()
+    {
+        if (isset($_SESSION['user_id'])) {
+            return $_SESSION['user_id'];
+        } else {
+            return null;
+        }
+    }
+    
 }
 
 ?>

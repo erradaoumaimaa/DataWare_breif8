@@ -22,7 +22,7 @@ class UserManager
             $stmt->closeCursor();
 
             if ($user && password_verify($password, $user['password'])) {
-                return new User($user['id_user'], $user['username'], $user['email'], $user['role'], $user['imagePath']);
+                return new User($user['id'], $user['username'], $user['email'], $user['role'], $user['image_url']);
             }
         }
 

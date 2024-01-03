@@ -1,5 +1,4 @@
 <?php
-
 class Project
 {
     private $id;
@@ -20,7 +19,6 @@ class Project
         $this->productOwnerId = $productOwnerId;
         $this->scrumMasterId = $scrumMasterId;
     }
-
     // getters
     public function getId()
     {

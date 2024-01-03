@@ -67,16 +67,8 @@
 
                 <div class="mb-4">
                     <label for="scrum_master_id" class="block text-sm font-medium text-gray-700">Scrum Master's :</label>
-                    <select id="scrum_master_id" name="scrum_master_id" class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500" >
-                        <?php
-                        $scrumMasters = $projectManager->getScrumMasters();
-
-                        foreach ($scrumMasters as $scrumMaster) {
-                            $selected = ($scrumMaster['id'] == $projectData['scrum_master_id']) ? 'selected' : '';
-                            echo "<option value='{$scrumMaster['id']}' {$selected}>{$scrumMaster['email']}</option>";
-                        }
-                        ?>
-                    </select>
+                   
+                    <input type="hidden" id="scrum_master_id" name="scrum_master_id" class="mt-1 p-2 w-full border rounded-md focus:outline-none focus:border-blue-500" value="<?php echo $projectData['scrum_master_id']; ?>" required>
                 </div>
 
                 <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300">Save Changes</button>

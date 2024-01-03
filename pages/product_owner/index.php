@@ -5,7 +5,7 @@ require_once "../../classes/Database.php";
 require_once "../../classes/ProjectManager.php";
 
 // Assuming you have a variable for the Product Owner's user ID, replace $productOwnerId with your actual variable
-$productOwnerId = 37; // Replace this with the actual Product Owner's user ID
+$productOwnerId = 1; // Replace this with the actual Product Owner's user ID
 $projectManager = new ProjectManager($database);
 $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
 ?>
@@ -69,7 +69,9 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
                                     <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                         <p><?= htmlspecialchars($project['description']) ?></p>
                                     </td>
-                                   
+                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
+                                        <p><?= htmlspecialchars($project['sm']) ?></p>
+                                    </td>
                                     <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                                         <span class="bg-purple-100 text-purple-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-300"><?= htmlspecialchars($project['status']) ?></span>
                                     </td>
@@ -77,13 +79,6 @@ $projects = $projectManager->getProjectsForProductOwner($productOwnerId);
                                         <span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
                                             <?= htmlspecialchars(date('d/m/Y', strtotime($project['date_end']))) ?>
                                         </span>
-                                    </td>
-                                   
-
-                                    <!-- Ajouter cette cellule pour chaque utilisateur dans le tableau -->
-                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                        <button onclick="changeUserRole(<?= htmlspecialchars($user['id']) ?>, 'scrum_master')">Change to Scrum Master</button>
-                                        <button onclick="changeUserRole(<?= htmlspecialchars($user['id']) ?>, 'user')">Change to User</button>
                                     </td>
                                     <td class="text-sm font-medium leading-5 whitespace-no-wrap border-b border-gray-200">
                                         <div class="flex items-center">

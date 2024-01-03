@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $scrumMasterEmail = $_POST["scrum_master"];
 
 
-    $productOwnerId = 37; // Replace this with the actual Product Owner's user ID
+    $productOwnerId = 1; // Replace this with the actual Product Owner's user ID
 
     // Create the project
     $result = $projectManager->createProject($name, $description, $endDate, $status, $productOwnerId, $scrumMasterEmail);

@@ -6,7 +6,7 @@ require_once(dirname(__FILE__) . "/../classes/Database.php");
 $dbHost = "localhost";
 $dbUser = "root";
 $dbPassword = "";
-$dbName = "db_dataware";
+$dbName = "db_dw";
 
 // instance de la classe Database
 $database = new Database($dbHost, $dbUser, $dbPassword, $dbName);

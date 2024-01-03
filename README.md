@@ -42,11 +42,13 @@ Abstract:xxx
 |—— .htaccess
 |—— classes
 |    |—— Database.php
+|    |—— FileUploadHelper.php
 |    |—— ProductOwner.php
 |    |—— Project.php
 |    |—— ProjectManager.php
 |    |—— ScrumMaster.php
-|    |—— Teams.php
+|    |—— TeamManager.php
+|    |—— Team.php
 |    |—— User.php
 |    |—— UserManager.php
 |—— config
@@ -62,6 +64,7 @@ Abstract:xxx
 |    |—— logout.php
 |    |—— product_owner
 |        |—— assign_sm.php
+|        |—— change_role.php
 |        |—— create_project.php
 |        |—— delete_project.php
 |        |—— edit_project.php
@@ -69,12 +72,16 @@ Abstract:xxx
 |        |—— p.php
 |    |—— scrum_master
 |        |—— assign_teams.php
+|        |—— create_team.php
+|        |—— edit_team.php
 |        |—— index.php
 |        |—— manage_teams.php
 |    |—— signup.php
 |    |—— user
 |        |—— index.php
 |        |—— project.php
+|—— pagesupload
+|    |—— ahmad.jpg
 |—— public
 |    |—— img
 |        |—— image1.jpg
@@ -82,8 +89,15 @@ Abstract:xxx
 |        |—— img2.jpg
 |        |—— logo.png
 |        |—— logov.PNG
+|—— test.html
 |—— upload
+|    |—— abdo.jpg
+|    |—— ahmad.jpg
+|    |—— najoua.jfif
 |    |—— oumaima.jpg
+|    |—— radia.jpg
+|    |—— yassir.jpg
+|    |—— zineb.jpg
 ```
 ## Code Details
 ### Tested Platform

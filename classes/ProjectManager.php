@@ -56,20 +56,41 @@ class ProjectManager
 
     private function getScrumMasterIdByEmail($scrumMasterEmail)
     {
-        $query = "SELECT id FROM users WHERE email = :email";
-        $stmt = $this->database->getConnection()->prepare($query);
-
-        if ($stmt) {
-            $stmt->bindValue(":email", $scrumMasterEmail, PDO::PARAM_STR);
-            $stmt->execute();
-            $scrumMasterId = $stmt->fetchColumn();
-            $stmt->closeCursor();
-
-            return $scrumMasterId;
+        try {
+            $query = "SELECT id FROM users WHERE LOWER(email) = LOWER(:email)";
+            $stmt = $this->database->getConnection()->prepare($query);
+    
+            if ($stmt) {
+                $trimmedEmail = trim($scrumMasterEmail);
+                $stmt->bindValue(":email", $trimmedEmail, PDO::PARAM_STR);
+                $stmt->execute();
+    
+                // Obtenez l'ID du Scrum Master
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+                if ($result && isset($result['id'])) {
+                    $scrumMasterId = $result['id'];
+                    $stmt->closeCursor();
+                    return $scrumMasterId;
+                } else {
+                    // Ajoutez ces lignes pour déboguer
+                    error_log("Scrum Master not found for email: " . $trimmedEmail);
+                    return null;
+                }
+            } else {
+                // Ajoutez ces lignes pour déboguer
+                error_log("Unable to prepare the statement for email: " . $scrumMasterEmail);
+                return null;
+            }
+        } catch (Exception $e) {
+            // Ajoutez ces lignes pour déboguer
+            error_log("Error: " . $e->getMessage());
+            return null;
         }
-
-        return null;
     }
+    
+    
+
 
     public function getScrumMasters()
     {
@@ -85,6 +106,23 @@ class ProjectManager
         }
 
         return [];
+    }
+
+    public function getProjectById($projectId)
+    {
+        $query = "SELECT * FROM projects WHERE id = :projectId";
+        $stmt = $this->database->getConnection()->prepare($query);
+
+        if ($stmt) {
+            $stmt->bindValue(":projectId", $projectId, PDO::PARAM_INT);
+            $stmt->execute();
+            $projectData = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
+
+            return $projectData;
+        }
+
+        return null;
     }
 
     public function getProjectsForProductOwner($productOwnerId)
@@ -106,20 +144,34 @@ class ProjectManager
         return [];
     }
 
-    public function updateProject($projectId, $name, $description, $endDate, $status, $scrumMasterEmail)
+    private function scrumMasterExists($scrumMasterId)
     {
-        // Get the Scrum Master's user ID based on their email
-        $scrumMasterId = $this->getScrumMasterIdByEmail($scrumMasterEmail);
-    
-        if ($scrumMasterId === null) {
-            return "Error: Scrum Master not found.";
+        $query = "SELECT COUNT(*) FROM users WHERE id = :scrumMasterId";
+        $stmt = $this->database->getConnection()->prepare($query);
+
+        if ($stmt) {
+            $stmt->bindValue(":scrumMasterId", $scrumMasterId, PDO::PARAM_INT);
+            $stmt->execute();
+
+            // Debug information
+            $queryString = $stmt->queryString;
+            $values = [':scrumMasterId' => $scrumMasterId];
+            error_log("Query: $queryString, Values: " . json_encode($values));
+
+            $count = $stmt->fetchColumn();
+            $stmt->closeCursor();
+
+            return ($count > 0);
         }
-    
-        // Use a database transaction for better data integrity
+
+        return false;
+    }
+
+    public function updateProject($projectId, $name, $description, $endDate, $status, $scrumMasterId)
+    {
         try {
             $this->database->getConnection()->beginTransaction();
     
-            // Update the project
             $query = "UPDATE projects 
                       SET name = :name, 
                           description = :description, 
@@ -131,17 +183,15 @@ class ProjectManager
             $stmt = $this->database->getConnection()->prepare($query);
     
             if ($stmt) {
-                $stmt->bindValue(":projectId", $projectId, PDO::PARAM_INT);
                 $stmt->bindValue(":name", $name, PDO::PARAM_STR);
                 $stmt->bindValue(":description", $description, PDO::PARAM_STR);
                 $stmt->bindValue(":endDate", $endDate, PDO::PARAM_STR);
                 $stmt->bindValue(":status", $status, PDO::PARAM_STR);
                 $stmt->bindValue(":scrumMasterId", $scrumMasterId, PDO::PARAM_INT);
-    
+                $stmt->bindValue(":projectId", $projectId, PDO::PARAM_INT);
                 $stmt->execute();
                 $stmt->closeCursor();
     
-                // Commit the transaction if everything is successful
                 $this->database->getConnection()->commit();
     
                 return null; // Success
@@ -149,31 +199,11 @@ class ProjectManager
                 return "Error: Unable to prepare the statement.";
             }
         } catch (Exception $e) {
-            // Rollback the transaction in case of an error
             $this->database->getConnection()->rollBack();
             return "Error: " . $e->getMessage();
         }
     }
     
-
-    
-    
-    public function getProjectById($projectId)
-{
-    $query = "SELECT * FROM projects WHERE id = :projectId";
-    $stmt = $this->database->getConnection()->prepare($query);
-
-    if ($stmt) {
-        $stmt->bindValue(":projectId", $projectId, PDO::PARAM_INT);
-        $stmt->execute();
-        $projectData = $stmt->fetch(PDO::FETCH_ASSOC);
-        $stmt->closeCursor();
-
-        return $projectData;
-    }
-
-    return null;
-}
 
 
 public function deleteProject($projectId)
